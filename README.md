@@ -13,7 +13,7 @@ Every run:
 2. Filters tweets by relevance (age, retweet exclusions, partner bypass logic)
 3. Sends each tweet to Claude with full partner context (chain, category, MCLB's relationship, key figures) to generate 3 reply or quote-tweet variants
 4. Saves drafts to a review dashboard
-5. Operator reviews, regenerates, skips, or hides -- then posts with one click
+5. Operator reviews, regenerates, skips, or hides. Posts with one click.
 
 This is not a spam bot. Every post is reviewed by a human before it goes out. The AI handles research and drafting; the operator handles judgment.
 
@@ -22,7 +22,7 @@ This is not a spam bot. Every post is reviewed by a human before it goes out. Th
 ## Key Features
 
 **Partner-aware AI drafting**
-Each partner has a custom context profile -- chain, protocol category, MCLB's position (ve(3,3) veNFT holder, LP, seed investor, etc.), and key team contacts. Claude uses this to write replies that sound like they come from someone who actually knows the protocol, not a generic comment.
+Each partner has a custom context profile: chain, protocol category, MCLB's position (ve(3,3) veNFT holder, LP, seed investor, etc.), and key team contacts. Claude uses this to write replies that sound like they come from someone who actually knows the protocol, not a generic comment.
 
 **Multi-source tweet discovery**
 - Direct profile scraping of all active partner accounts
@@ -152,7 +152,7 @@ mclb-bot/
 
 Running a DeFi DAO requires showing up consistently across protocols you hold positions in. veNFT governance, LP bribe markets, and protocol launches all move fast on Twitter. Missing a Velodrome epoch announcement or an Aerodrome gauge vote costs real yield.
 
-This bot is how one operator keeps up across 20+ positions without spending 4 hours a day on Twitter -- while still sounding like a person who actually understands the protocols.
+This bot is how one operator keeps up across 20+ positions without spending 4 hours a day on Twitter, while still sounding like a person who actually understands the protocols.
 
 ---
 
