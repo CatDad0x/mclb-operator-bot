@@ -1,0 +1,38 @@
+# --- SENSITIVE — never commit these ---
+.env
+cookies.json
+browser_cookies.json
+browser_cookies.json.rtf
+
+# --- Runtime data (personal, changes constantly) ---
+drafts.json
+seen_posts.json
+drafts_report.html
+
+# --- Python ---
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# --- macOS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# --- Old versions ---
+dashboard_v1.py
+
+# --- Local dev config ---
+.claude/
+
+# --- Editor ---
+.vscode/
+.idea/
+*.swp
+*.swo

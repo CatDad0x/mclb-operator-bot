@@ -1,0 +1,179 @@
+[
+  {
+    "handle": "AerodromeFi",
+    "name": "Aerodrome",
+    "chain": "Base",
+    "category": "DEX",
+    "active": true,
+    "logo_url": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/base/assets/0x940181a94A35A4569E4529A3CDfB74e38FD98631/logo.png",
+    "context": "Base's flagship ve(3,3) DEX. MCLB is the 2nd largest DAO veAERO holder globally. Coinbase now routes order books through Base Chain DEXs \u2014 our veAERO stake is direct exposure to the future of American crypto infrastructure. We run continuous fBOMB liquidity pools on Aerodrome. Key figure: @wagmiAlexander (lead)."
+  },
+  {
+    "handle": "beets_fi",
+    "name": "Beets",
+    "chain": "Sonic",
+    "category": "DEX / LST",
+    "active": true,
+    "context": "Top LST protocol and DEX on Sonic, fully backed by Sonic Foundation. MCLB is the biggest holder. Revenue positive: protocol revenue exceeds emissions \u2014 rare in DeFi. Unique products: weighted pools, boosted pools. We also provide liquidity to the DEX. Key team: @franz_ns, @defi_naly."
+  },
+  {
+    "handle": "bmxdefi",
+    "name": "BMX",
+    "chain": "Base",
+    "category": "Perp / DEX",
+    "active": true,
+    "context": "Perpetuals platform and DEX on Base. Launching DeliSwap DEX soon \u2014 MCLB will seed fBOMB LPs at launch. We hold a significant governance position. Founder: @meowphasaurus, COO: @D333z."
+  },
+  {
+    "handle": "curvance",
+    "name": "Curvance",
+    "chain": "Monad",
+    "category": "Lending",
+    "active": true,
+    "context": "Lending and borrowing protocol accepting LP tokens, vault tokens, and other productive assets as collateral. Multichain, pre-launch \u2014 first chain is Monad. MCLB is among the biggest seed investors. Expected to be one of the largest protocol launches this year. We will seed fBOMB LPs once live."
+  },
+  {
+    "handle": "estforkingdom",
+    "name": "Estfor Kingdom",
+    "chain": "Sonic",
+    "category": "Gaming",
+    "active": true,
+    "context": "Fully on-chain MMORPG built by the PaintSwap team. MCLB is the biggest $BRUSH holder (PaintSwap's token). We have an MCLB community clan in-game."
+  },
+  {
+    "handle": "FateAdventure",
+    "name": "Fate Adventure",
+    "chain": "Sonic",
+    "category": "Gaming",
+    "active": true,
+    "context": "Fully on-chain RPG on Sonic with cinematic quest streaming. Co-marketing partner. MCLB is the biggest holder. We support and amplify where we can."
+  },
+  {
+    "handle": "massachain",
+    "name": "Massa",
+    "chain": "Massa",
+    "category": "L1",
+    "active": true,
+    "context": "Layer 1 blockchain with autonomous smart contracts and parallel execution. MCLB are seed investors."
+  },
+  {
+    "handle": "MinaProtocol",
+    "name": "Mina",
+    "chain": "Mina",
+    "category": "L1",
+    "active": true,
+    "context": "Lightweight blockchain using zk-proofs to maintain a minimal constant chain size. MCLB are investors."
+  },
+  {
+    "handle": "mintlayer",
+    "name": "Mintlayer",
+    "chain": "Bitcoin",
+    "category": "Bitcoin Layer",
+    "active": true,
+    "context": "Bitcoin layer enabling tokenization, smart contracts, and DeFi secured by Bitcoin. MCLB are investors."
+  },
+  {
+    "handle": "navfinance_",
+    "name": "NAV Finance",
+    "chain": "Multi",
+    "category": "Hedge Fund",
+    "active": true,
+    "context": "Regulated crypto hedge fund. MCLB are investors. FieryDev is also an LP in this fund. Run by @DigitsDao."
+  },
+  {
+    "handle": "paint_swap",
+    "name": "PaintSwap",
+    "chain": "Sonic",
+    "category": "NFT Marketplace",
+    "active": true,
+    "context": "Primary NFT marketplace on Sonic, fully backed by Sonic Labs. MCLB is the biggest $BRUSH holder. Same team behind Estfor Kingdom. Key contributor: @0xDoubleSharp."
+  },
+  {
+    "handle": "PharaohExchange",
+    "name": "Pharaoh",
+    "chain": "Avalanche",
+    "category": "DEX",
+    "active": true,
+    "context": "2nd biggest ve(3,3) DEX on Avalanche. MCLB holds a large vePHAR position and deploys liquidity on the DEX. Founder: @LHBCrypto."
+  },
+  {
+    "handle": "SwapXfi",
+    "name": "SwapX",
+    "chain": "Sonic",
+    "category": "DEX",
+    "active": true,
+    "context": "2nd biggest DEX on Sonic. MCLB is a key partner \u2014 active LPs and a veNFT position directing emissions. CCO is highly active on-chain and on Twitter: @Lady_Mania528."
+  },
+  {
+    "handle": "ThenaFi_",
+    "name": "Thena",
+    "chain": "BNB Chain",
+    "category": "DEX",
+    "active": true,
+    "context": "Flagship ve(3,3) DEX on BNB Chain. MCLB holds veNFT governance positions to direct emissions toward fBOMB pools and earn bribes from vote markets. Core fBOMB liquidity deployment on BNB Chain."
+  },
+  {
+    "handle": "VelodromeFi",
+    "name": "Velodrome",
+    "chain": "Optimism",
+    "category": "DEX",
+    "active": true,
+    "context": "Optimism's flagship ve(3,3) DEX, fully backed by the OP team. MCLB has a large veNFT position and maintains continuous fBOMB liquidity pools. One of our most important and longest-running liquidity partnerships."
+  },
+  {
+    "handle": "wagmicom",
+    "name": "WAGMI",
+    "chain": "Sonic",
+    "category": "DEX / Liquidity Manager",
+    "active": true,
+    "context": "DEX and liquidity manager on Sonic. MCLB has a position. Founder: @danielesesta \u2014 prominent DeFi figure known for building key Fantom-era protocols."
+  },
+  {
+    "handle": "heyanonai",
+    "name": "HeyAnon",
+    "chain": "Sonic",
+    "category": "AI / Dashboard",
+    "active": true,
+    "context": "AI agent and DeFi dashboard product built on Sonic. Same founder as WAGMI (@danielesesta). MCLB has positions in both."
+  },
+  {
+    "handle": "RamsesExchange",
+    "name": "Ramses",
+    "chain": "Hyperliquid",
+    "category": "DEX",
+    "active": true,
+    "context": "ve(3,3) DEX on Hyperliquid. MCLB has a veNFT position and an active fBOMB liquidity pool."
+  },
+  {
+    "handle": "beradrome",
+    "name": "Beradrome",
+    "chain": "Berachain",
+    "category": "DEX",
+    "active": true,
+    "context": "ve(3,3) DEX on Berachain. MCLB has a veNFT position and an active fBOMB liquidity pool."
+  },
+  {
+    "handle": "BlackholeDex",
+    "name": "Blackhole",
+    "chain": "Avalanche",
+    "category": "DEX",
+    "active": true,
+    "context": "Avalanche-native ve(3,3) DEX. A major partner \u2014 MCLB bribes and provides liquidity to fBOMB pools for yield farming. Founders: Becker and Elliotrades. BD lead: @Mash_CT."
+  },
+  {
+    "handle": "etherexfi",
+    "name": "Etherex",
+    "chain": "Linea",
+    "category": "DEX",
+    "active": true,
+    "context": "Linea-native ve(3,3) DEX backed by the Linea team. MCLB seeded fBOMB LP with farms for week 1 launch. Early-stage partnership."
+  },
+  {
+    "handle": "YeetStrategy",
+    "name": "Yeet",
+    "chain": "TBA",
+    "category": "Strategy",
+    "active": true,
+    "context": "Yield strategy product, launching soon. FieryDev is the largest investor. Handle carefully until the public launch announcement."
+  }
+]
