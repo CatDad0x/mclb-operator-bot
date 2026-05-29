@@ -24,7 +24,7 @@ This bot solves the operational problem without removing human judgment from the
 
 ## Command Centre
 
-![Command Centre](screenshots/command-centre.png)
+![Command Centre](assets/command-centre.png)
 
 The main dashboard shows live bot status, the number of drafts pending review, active partner count, watchlist size, and a real-time activity log of what happened on the last run. Everything is visible at a glance before touching any individual draft.
 
@@ -84,7 +84,7 @@ All drafts are saved to `drafts.json` and surfaced in the local Flask dashboard.
 
 ## Tweet Review
 
-![Tweet Review](screenshots/tweet-review.png)
+![Tweet Review](assets/tweet-review.png)
 
 Each captured tweet shows the original content, engagement counts, and all three AI-drafted response options. The operator can:
 
@@ -100,7 +100,7 @@ Drafts are separated into tabs: All, Partners, and Watchlist.
 
 ## Partner Registry
 
-![Partners](screenshots/partners.png)
+![Partners](assets/partners.png)
 
 Every partner protocol has a full profile card showing chain, category, Twitter handle, and the context description used by Claude when drafting responses. Partners can be added, edited, or deactivated directly from the dashboard without touching any code changes.
 
