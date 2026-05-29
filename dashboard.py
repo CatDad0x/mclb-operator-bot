@@ -6,16 +6,19 @@ Then open: http://localhost:8080
 
 import asyncio
 import json
+import os
 import sys
 from pathlib import Path
 
 import httpx
 from dotenv import load_dotenv
-from flask import Flask, Response, jsonify, render_template_string, request
+from flask import Flask, Response, jsonify, redirect, render_template_string, request, session
 
 load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY", os.urandom(24).hex())
+DASHBOARD_PASSWORD = os.getenv("DASHBOARD_PASSWORD", "")
 
 BASE                   = Path(__file__).parent
 DRAFTS_FILE            = BASE / "drafts.json"
@@ -85,6 +88,164 @@ def read_partner_accounts() -> list:
     if PARTNER_ACCOUNTS_FILE.exists():
         return json.loads(PARTNER_ACCOUNTS_FILE.read_text())
     return []
+
+
+# ── Auth ───────────────────────────────────────────────────────────────────────
+
+@app.before_request
+def require_login():
+    if request.endpoint in ("login", "logout", "static"):
+        return
+    if not session.get("logged_in"):
+        return redirect("/login")
+
+
+LOGIN_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCLB Operator — Login</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #030912;
+  color: #eef4ff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-wrap {
+  width: 100%;
+  max-width: 380px;
+  padding: 20px;
+}
+.login-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  justify-content: center;
+}
+.login-logo img {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(0,177,255,0.35);
+}
+.login-logo-text { text-align: left; }
+.login-logo-title { font-size: 14px; font-weight: 700; color: #eef4ff; }
+.login-logo-sub { font-size: 10px; color: #38587a; margin-top: 2px; }
+.login-card {
+  background: #071120;
+  border: 1px solid #0f1e30;
+  border-radius: 14px;
+  padding: 28px 26px;
+}
+.login-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #eef4ff;
+  margin-bottom: 6px;
+}
+.login-sub {
+  font-size: 12px;
+  color: #38587a;
+  margin-bottom: 24px;
+}
+label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #7a9ec4;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 7px;
+}
+input[type=password] {
+  width: 100%;
+  background: #040c16;
+  border: 1px solid #0f1e30;
+  border-radius: 8px;
+  padding: 10px 13px;
+  color: #eef4ff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .15s;
+  font-family: inherit;
+}
+input[type=password]:focus { border-color: #3b82f6; }
+.login-btn {
+  width: 100%;
+  margin-top: 18px;
+  height: 40px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(59,130,246,0.35);
+  transition: background .15s, box-shadow .15s;
+  font-family: inherit;
+}
+.login-btn:hover { background: #2563eb; box-shadow: 0 0 26px rgba(59,130,246,0.5); }
+.login-err {
+  margin-top: 14px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid #7f1d1d;
+  color: #ef4444;
+  border-radius: 7px;
+  padding: 9px 13px;
+  font-size: 12px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-logo">
+    <img src="https://pbs.twimg.com/profile_images/1880742617889681408/cSfBVJvV_400x400.jpg" alt="MCLB">
+    <div class="login-logo-text">
+      <div class="login-logo-title">MCLB Operator</div>
+      <div class="login-logo-sub">Command Center</div>
+    </div>
+  </div>
+  <div class="login-card">
+    <div class="login-title">Sign in</div>
+    <div class="login-sub">Enter the team password to access the dashboard.</div>
+    <form method="POST" action="/login">
+      <label for="pw">Password</label>
+      <input type="password" id="pw" name="password" autofocus placeholder="Enter password">
+      <button type="submit" class="login-btn">Access Dashboard</button>
+      {% if error %}<div class="login-err">Incorrect password. Try again.</div>{% endif %}
+    </form>
+  </div>
+</div>
+</body>
+</html>"""
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = False
+    if request.method == "POST":
+        if not DASHBOARD_PASSWORD:
+            session["logged_in"] = True
+            return redirect("/")
+        if request.form.get("password") == DASHBOARD_PASSWORD:
+            session["logged_in"] = True
+            return redirect("/")
+        error = True
+    return render_template_string(LOGIN_HTML, error=error)
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
 
 
 # ── Routes ─────────────────────────────────────────────────────────────────────
@@ -2054,6 +2215,14 @@ body.sidebar-collapsed .topbar-brand-text { display: none; }
     </svg>
     <span class="toggle-label">Collapse</span>
   </button>
+
+  <!-- Logout -->
+  <a href="/logout" class="sidebar-toggle" data-tip="Sign out" style="text-decoration:none;margin-top:2px;">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" style="width:16px;height:16px;flex-shrink:0">
+      <path d="M13 15l4-5-4-5M17 10H7M10 3H4a1 1 0 00-1 1v12a1 1 0 001 1h6"/>
+    </svg>
+    <span class="toggle-label">Sign out</span>
+  </a>
 </nav>
 
 <!-- ── Main Area ────────────────────────────────────────────────────────── -->
