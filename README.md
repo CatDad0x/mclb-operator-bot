@@ -150,9 +150,9 @@ mclb-bot/
 
 ## Why This Exists
 
-Running a DeFi DAO requires showing up consistently across protocols you hold positions in. veNFT governance, LP bribe markets, and protocol launches all move fast on Twitter. Missing a Velodrome epoch announcement or an Aerodrome gauge vote costs real yield.
+In DeFi, presence is part of the job. MCLB has active positions across 20+ protocols and the expectation is that we show up -- congratulating launches, engaging with governance posts, amplifying partner milestones, and making sure our name is visible in the right conversations.
 
-This bot is how one operator keeps up across 20+ positions without spending 4 hours a day on Twitter, while still sounding like a person who actually understands the protocols.
+Doing that manually across 20+ accounts every day is not realistic. This bot keeps the engagement consistent and on-brand without it becoming a full-time task. The AI handles the research and drafting; the operator handles the judgment call on what actually gets posted.
 
 ---
 
