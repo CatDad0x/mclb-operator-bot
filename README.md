@@ -1,44 +1,60 @@
-# MCLB Operator Bot
+# DeFi Operator Bot
 
-An AI-powered Twitter engagement bot built for the MCLB DAO operator role. It monitors partner protocol activity across 20+ DeFi ecosystems, drafts context-aware reply and quote-tweet content using Claude, and surfaces the best opportunities through a custom web dashboard for one-click review and posting.
+A Twitter engagement command centre for DeFi DAOs and protocol operators. Monitors partner accounts across any number of chains and protocols, uses Claude AI to draft context-aware replies and quote-tweets, and surfaces everything through a local review dashboard for one-click posting.
+
+This repo is the MCLB DAO instance, configured for MCLB's partner ecosystem across 8+ chains.
 
 ---
 
-## What This Does
+## Screenshots
 
-Most DeFi DAOs miss engagement opportunities because manually tracking 20+ partner accounts across Aerodrome, Velodrome, Beets, SwapX, Pharaoh, Thena, and others is impossible to do consistently. This bot solves that.
+### Command Centre
+![Command Centre](screenshots/command-centre.png)
+
+### Tweet Review
+![Tweet Review](screenshots/tweet-review.png)
+
+### Partner Registry
+![Partners](screenshots/partners.png)
+
+---
+
+## What It Does
+
+In DeFi, presence is part of the job. DAOs with active positions across many protocols need to show up consistently -- congratulating launches, engaging with governance announcements, amplifying partner milestones, and staying visible in the right conversations.
+
+Doing that manually across 20+ accounts every day is not realistic. This tool keeps engagement consistent and on-brand without it becoming a full-time task.
 
 Every run:
-1. Scrapes partner Twitter accounts directly + pulls from the Following timeline
-2. Filters tweets by relevance (age, retweet exclusions, partner bypass logic)
-3. Sends each tweet to Claude with full partner context (chain, category, MCLB's relationship, key figures) to generate 3 reply or quote-tweet variants
-4. Saves drafts to a review dashboard
-5. Operator reviews, regenerates, skips, or hides. Posts with one click.
+1. Scrapes all partner Twitter accounts directly + pulls from the Following and For You timelines
+2. Filters by relevance: age, retweet exclusions, partner bypass logic
+3. Sends each tweet to Claude with full partner context to generate 3 reply or quote-tweet variants
+4. Saves drafts to the review dashboard
+5. Operator reviews, picks a variant (or edits it), and posts with one click
 
-This is not a spam bot. Every post is reviewed by a human before it goes out. The AI handles research and drafting; the operator handles judgment.
+The AI handles research and drafting. The operator handles judgment.
 
 ---
 
 ## Key Features
 
-**Partner-aware AI drafting**
-Each partner has a custom context profile: chain, protocol category, MCLB's position (ve(3,3) veNFT holder, LP, seed investor, etc.), and key team contacts. Claude uses this to write replies that sound like they come from someone who actually knows the protocol, not a generic comment.
+**Command Centre**
+Live overview of bot status, review queue size, active partner count, and watchlist. Bot activity log shows exactly what happened on the last run.
 
-**Multi-source tweet discovery**
-- Direct profile scraping of all active partner accounts
-- Following timeline scraping (For You + Following feeds)
-- Partner tweets bypass keyword filters since their content is always relevant
+**Tweet Review Queue**
+Each captured tweet gets 3 AI-drafted response options, each with a tone label and confidence rating. Options can be posted directly, edited inline, regenerated for a fresh take, skipped, or permanently hidden.
+
+**Partner Registry**
+Full directory of partner protocols with chain, category, Twitter handle, and a custom context profile used by Claude when drafting responses. Partners can be added, edited, or deactivated without touching code.
+
+**Watchlist**
+Non-partner accounts worth monitoring (ecosystem players, key figures, competing protocols). Tweets from watchlist accounts go into a separate review tab.
+
+**Partner-aware AI drafting**
+Each partner has a detailed context profile: chain, protocol category, MCLB's position (ve(3,3) veNFT holder, LP, seed investor, etc.), and key team contacts. Claude uses this to write responses that sound like they come from someone who actually knows the protocol.
 
 **Smart deduplication**
 Tracks seen tweet IDs across runs so the same tweet is never drafted twice. Orphan protection ensures a tweet is only blacklisted if a draft was actually saved.
-
-**Review dashboard**
-A local Flask web app with:
-- Live draft cards showing tweet context, MCLB relationship, and all 3 Claude variants
-- Regenerate button to get a fresh take
-- Skip (soft dismiss) and Hide (permanent blacklist) per tweet
-- Posting via Twitter API from the dashboard
-- Session log showing which partners produced content and why others were skipped
 
 **Rate limit resilience**
 Partner accounts are shuffled each run and visited with delays to reduce Twitter rate-limit hits. Nav failures return empty results rather than reading stale page content.
@@ -57,11 +73,11 @@ Partner accounts are shuffled each run and visited with delays to reduce Twitter
 
 ---
 
-## Partner Ecosystem
+## MCLB Partner Ecosystem
 
-Active partners tracked across 8+ chains:
+This instance tracks 22 active partners across 8+ chains:
 
-| Protocol | Chain | Category | MCLB Position |
+| Protocol | Chain | Category | Position |
 |---|---|---|---|
 | Aerodrome | Base | ve(3,3) DEX | 2nd largest DAO veAERO holder globally |
 | Velodrome | Optimism | ve(3,3) DEX | Large veNFT + continuous LPs |
@@ -84,6 +100,7 @@ Active partners tracked across 8+ chains:
 | Mintlayer | Bitcoin | Bitcoin Layer | Investor |
 | NAV Finance | Multi | Hedge Fund | LP |
 | Etherex | Linea | ve(3,3) DEX | Seed LP |
+| Yeet | TBA | Strategy | Largest investor |
 
 ---
 
@@ -93,7 +110,7 @@ Active partners tracked across 8+ chains:
 
 - Python 3.10+
 - An Anthropic API key
-- Twitter account cookies (logged into the MCLB account in Chrome)
+- Twitter account cookies (logged into the operator account in Chrome)
 
 ### Install
 
@@ -107,13 +124,13 @@ playwright install chromium
 
 ### Configure
 
-Copy `.env.example` to `.env` and fill in your Anthropic API key:
+Copy `.env.example` to `.env` and add your Anthropic API key:
 
 ```bash
 cp .env.example .env
 ```
 
-Export your Twitter cookies from Chrome (using a browser extension like EditThisCookie or Cookie-Editor) and save to `browser_cookies.json`.
+Export your Twitter cookies from Chrome (using a browser extension like Cookie-Editor) and save to `browser_cookies.json`.
 
 ### Run
 
@@ -122,7 +139,7 @@ Start the review dashboard:
 python3 dashboard.py
 ```
 
-Open `http://localhost:5001` in your browser, then run the bot:
+Open `http://localhost:5001` in your browser, then run the bot in a separate terminal:
 ```bash
 python3 bot.py
 ```
@@ -131,14 +148,25 @@ Or use the included macOS launchers: `Run Bot.command` and `Start Dashboard.comm
 
 ---
 
+## Adapting for a Different DAO
+
+To run this for a different protocol or operator account:
+
+1. Replace `partner_accounts.json` with your own partner list
+2. Update `target_accounts.json` with your watchlist
+3. Point `browser_cookies.json` at your Twitter account
+4. The bot and dashboard require no code changes
+
+---
+
 ## Project Structure
 
 ```
 mclb-bot/
-├── bot.py                  # Main bot: scraping, AI drafting, deduplication
-├── dashboard.py            # Flask dashboard: review, regenerate, post
+├── bot.py                  # Core bot: scraping, AI drafting, deduplication
+├── dashboard.py            # Flask dashboard: review, compose, post
 ├── partner_accounts.json   # Partner profiles with context for Claude
-├── target_accounts.json    # High-value non-partner accounts to monitor
+├── target_accounts.json    # Watchlist accounts to monitor
 ├── targets.txt             # Additional accounts list
 ├── requirements.txt
 ├── .env.example
@@ -148,16 +176,8 @@ mclb-bot/
 
 ---
 
-## Why This Exists
-
-In DeFi, presence is part of the job. MCLB has active positions across 20+ protocols and the expectation is that we show up -- congratulating launches, engaging with governance posts, amplifying partner milestones, and making sure our name is visible in the right conversations.
-
-Doing that manually across 20+ accounts every day is not realistic. This bot keeps the engagement consistent and on-brand without it becoming a full-time task. The AI handles the research and drafting; the operator handles the judgment call on what actually gets posted.
-
----
-
 ## Notes
 
 - All posts are manually reviewed before publishing. The AI drafts; the human decides.
 - Partner context profiles are maintained in `partner_accounts.json` and updated as relationships evolve.
-- The bot is designed for a single operator account. Multi-account support is not in scope.
+- Sensitive files (`browser_cookies.json`, `.env`, `drafts.json`, `seen_posts.json`) are gitignored and never committed.
