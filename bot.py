@@ -308,10 +308,14 @@ BROAD_QUERIES = [
 # ── Cookie loading ─────────────────────────────────────────────────────────────
 
 def load_cookies() -> dict:
-    if not BROWSER_COOKIES_FILE.exists():
-        raise FileNotFoundError("browser_cookies.json not found. Export from Cookie-Editor.")
-    with open(BROWSER_COOKIES_FILE) as f:
-        raw = json.load(f)
+    cookies_json = os.getenv("BROWSER_COOKIES_JSON")
+    if cookies_json:
+        raw = json.loads(cookies_json)
+    elif BROWSER_COOKIES_FILE.exists():
+        with open(BROWSER_COOKIES_FILE) as f:
+            raw = json.load(f)
+    else:
+        raise FileNotFoundError("No browser cookies found. Set BROWSER_COOKIES_JSON env var or provide browser_cookies.json.")
     if isinstance(raw, list):
         return {c["name"]: c["value"] for c in raw if "name" in c and "value" in c}
     return raw
@@ -793,11 +797,9 @@ async def run():
     print(f"\n── Searching for tweets (real browser)...")
     candidates = []
 
-    with open(BROWSER_COOKIES_FILE) as f:
-        raw_cookies = json.load(f)
-    pw_cookies = playwright_cookies(raw_cookies if isinstance(raw_cookies, list) else [
-        {"name": k, "value": v} for k, v in raw_cookies.items()
-    ])
+    raw_cookies_dict = load_cookies()
+    raw_cookies = [{"name": k, "value": v} for k, v in raw_cookies_dict.items()]
+    pw_cookies = playwright_cookies(raw_cookies)
 
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(headless=True)

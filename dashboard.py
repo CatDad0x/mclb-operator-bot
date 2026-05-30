@@ -36,8 +36,15 @@ TWITTER_BEARER = (
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
 def load_cookies() -> dict:
-    with open(COOKIES_FILE) as f:
-        raw = json.load(f)
+    # On a deployed server, cookies are stored as a JSON env var instead of a file
+    cookies_json = os.getenv("BROWSER_COOKIES_JSON")
+    if cookies_json:
+        raw = json.loads(cookies_json)
+    elif COOKIES_FILE.exists():
+        with open(COOKIES_FILE) as f:
+            raw = json.load(f)
+    else:
+        raise FileNotFoundError("No browser cookies found. Set BROWSER_COOKIES_JSON env var or provide browser_cookies.json.")
     if isinstance(raw, list):
         return {c["name"]: c["value"] for c in raw if "name" in c and "value" in c}
     return raw
@@ -3654,10 +3661,11 @@ loadDrafts();
 
 
 if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8080))
     import threading, webbrowser, time as _time
     def _open():
         _time.sleep(1.5)
-        webbrowser.open("http://localhost:8080")
+        webbrowser.open(f"http://localhost:{port}")
     threading.Thread(target=_open, daemon=True).start()
-    print("\n  MCLB Operator — http://localhost:8080\n")
-    app.run(debug=False, port=8080)
+    print(f"\n  MCLB Operator — http://localhost:{port}\n")
+    app.run(debug=False, host="0.0.0.0", port=port)
