@@ -732,7 +732,9 @@ def hide_draft():
 def regenerate_draft():
     import anthropic as _ant
     import os as _os
-    tweet_id = (request.json or {}).get("tweet_id")
+    data         = request.json or {}
+    tweet_id     = data.get("tweet_id")
+    instructions = data.get("instructions", "").strip()
     if not DRAFTS_FILE.exists():
         return jsonify({"ok": False, "error": "no drafts"})
     drafts = json.loads(DRAFTS_FILE.read_text())
@@ -748,17 +750,19 @@ def regenerate_draft():
         if draft.get("type") == "reply":
             bullish, sarcastic, alpha = generate_replies(
                 draft.get("tweet_text", ""), draft.get("author", ""),
-                is_target, client, partner=partner
+                is_target, client, partner=partner, instructions=instructions
             )
         else:
             bullish, sarcastic, alpha = generate_qts(
                 draft.get("tweet_text", ""), draft.get("author", ""),
-                is_target, client, partner=partner
+                is_target, client, partner=partner, instructions=instructions
             )
         draft["draft_bullish"]   = bullish
         draft["draft_sarcastic"] = sarcastic
         draft["draft_alpha"]     = alpha
         draft["draft_serious"]   = bullish
+        if instructions:
+            draft["regen_instructions"] = instructions
         DRAFTS_FILE.write_text(json.dumps(drafts, indent=2))
         return jsonify({"ok": True, "bullish": bullish, "sarcastic": sarcastic, "alpha": alpha})
     except Exception as ex:
@@ -1807,6 +1811,22 @@ body.sidebar-collapsed .topbar-brand-text { display: none; }
 }
 .bsk:hover { border-color: var(--border2); color: var(--text2); }
 .bp:disabled, .bsk:disabled { opacity: .25; cursor: not-allowed; }
+
+.regen-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 6px 11px;
+  color: var(--text);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s;
+}
+.regen-input:focus { border-color: var(--accent); }
+.regen-input::placeholder { color: var(--text3); }
 .bhide {
   background: none;
   border: 1px solid transparent;
@@ -3154,7 +3174,7 @@ function renderDraft(d) {
 
   let acts = "";
   if (!done) {
-    acts = `<button class="bp regen" onclick="regenDraft('${tid}',this)">↺ Regenerate</button>
+    acts = `<button class="bp regen" onclick="showRegenPrompt('${tid}')">↺ Regenerate</button>
             <button class="bsk" onclick="skipDraft('${tid}',this)">Skip</button>
             <span class="afb" id="fb${tid}"></span>
             <button class="bhide" onclick="hideDraft('${tid}')" title="Hide permanently — bot won't redraft this tweet">✕ Hide</button>`;
@@ -3260,19 +3280,32 @@ async function hideDraft(tid) {
   setTimeout(loadDrafts, 300);
 }
 
+function showRegenPrompt(tid) {
+  const actions = document.getElementById("card-" + tid)?.querySelector(".dactions");
+  if (!actions) return;
+  actions.innerHTML = `
+    <input type="text" class="regen-input" id="ri-${tid}"
+           placeholder="Framing, tone, angle, keywords... (optional — leave blank to just regenerate)"
+           onkeydown="if(event.key==='Enter')regenDraft('${tid}',document.getElementById('rg-${tid}'))">
+    <button class="bp regen" id="rg-${tid}" onclick="regenDraft('${tid}',this)">↺ Go</button>
+    <button class="bsk" onclick="loadDrafts()">Cancel</button>
+  `;
+  document.getElementById("ri-" + tid)?.focus();
+}
+
 async function regenDraft(tid, btn) {
+  const instructions = document.getElementById("ri-" + tid)?.value?.trim() || "";
   lock(tid);
   if (btn) { btn.disabled = true; btn.textContent = "Regenerating…"; }
-  const res = await post("/regenerate-draft", {tweet_id: tid});
+  const res = await post("/regenerate-draft", {tweet_id: tid, instructions});
   if (res.ok) {
-    // Clear any local edits for this draft
     delete _edits[tid];
     setTimeout(loadDrafts, 300);
   } else {
     const fb = document.getElementById("fb" + tid);
     if (fb) { fb.style.display = "inline"; fb.className = "afb err"; fb.textContent = "Regen failed: " + (res.error || "unknown"); }
     unlock(tid);
-    if (btn) { btn.disabled = false; btn.textContent = "↺ Regenerate"; }
+    if (btn) { btn.disabled = false; btn.textContent = "↺ Go"; }
   }
 }
 

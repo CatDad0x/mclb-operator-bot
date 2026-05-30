@@ -485,7 +485,7 @@ async def scrape_user(handle: str, page, max_tweets: int = 10) -> list:
 
 # ── Claude: reply + quote tweet ───────────────────────────────────────────────
 
-def generate_replies(tweet_text: str, tweet_author: str, is_target: bool, claude: anthropic.Anthropic, partner=None) -> tuple[str, str, str]:
+def generate_replies(tweet_text: str, tweet_author: str, is_target: bool, claude: anthropic.Anthropic, partner=None, instructions: str = "") -> tuple[str, str, str]:
     """Returns (bullish_reply, sarcastic_reply, alpha_reply)."""
     target_note = (
         f"@{tweet_author} is a high-priority account. High visibility — make the reply sharp and credible.\n\n"
@@ -499,8 +499,10 @@ Relationship context: {partner['context']}
 Write as someone with real shared history and actual skin in the game. Reference specifics from the context above where they add genuine value — not generic cheerleading.
 For the tongue-in-cheek version: keep it warm and self-aware — this is a genuine partner, not a target for dry pushback.\n\n"""
 
+    instructions_note = f"\nOPERATOR INSTRUCTIONS: {instructions}\nApply this framing/angle/tone across all variants.\n" if instructions else ""
+
     base_rules = f"""{target_note}{partner_note}Tweet from @{tweet_author}:
-"{tweet_text}"
+"{tweet_text}"{instructions_note}
 
 Rules:
 - NEVER use em dashes (—) or en dashes (–). Period or line break instead.
@@ -604,7 +606,7 @@ Graphic suggestion:"""
     return result
 
 
-def generate_qts(tweet_text: str, tweet_author: str, is_target: bool, claude: anthropic.Anthropic, partner=None) -> tuple[str, str, str]:
+def generate_qts(tweet_text: str, tweet_author: str, is_target: bool, claude: anthropic.Anthropic, partner=None, instructions: str = "") -> tuple[str, str, str]:
     """Returns (bullish_qt, sarcastic_qt, alpha_qt). All three always generated."""
     target_note = (
         f"@{tweet_author} is a high-priority account. A sharp QT here gets high visibility.\n\n"
@@ -618,8 +620,10 @@ Relationship context: {partner['context']}
 Write as someone with real shared history and actual skin in the game. Reference specifics where they add genuine value.
 For the tongue-in-cheek version: keep it warm and self-aware — this is a genuine partner.\n\n"""
 
+    instructions_note = f"\nOPERATOR INSTRUCTIONS: {instructions}\nApply this framing/angle/tone across all variants.\n" if instructions else ""
+
     base = f"""{target_note}{partner_note}Tweet from @{tweet_author}:
-"{tweet_text}"
+"{tweet_text}"{instructions_note}
 
 Write a quote tweet comment — the text that goes ABOVE the quoted tweet.
 Rules:
