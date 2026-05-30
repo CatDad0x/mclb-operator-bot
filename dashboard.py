@@ -524,6 +524,8 @@ PILLAR_PROMPTS = {
     "treasury":   "Topic: Active treasury management. Cover one of: why most DAO treasuries are idle and why that's a mistake, how MCLB deploys capital into yield-generating positions ($40M+ deployed), treasury vs speculation distinction, risk-adjusted yield evaluation, the flywheel connecting treasury growth to $MCLB and fBOMB demand, what an active-treasury DAO looks like in practice.",
     "ecosystem":  "Topic: Ecosystem building and incubation. Cover one of: how MCLB incubates new DeFi products (seed liquidity + token design), using fBOMB as a pairing asset for new launches to create virtuous loops, what makes a good protocol partnership for a liquidity DAO, how product incubation differs from passive investment, the strategic logic behind building inside your own ecosystem.",
     "operator":   "Topic: DeFi operator insights. Cover one of: a lesson from managing $40M+ in deployed capital, what most protocols get wrong about liquidity design, what $100M+ in LP yield generated teaches about protocol health, how DeFi flywheel design fails in practice (and what works), the gap between DeFi tokenomics theory and what happens on-chain, observations from operating across Sonic/Berachain/veToken ecosystems.",
+    "bribes":     "Topic: Weekly bribe and liquidity incentive announcement for fBOMB pairs across ve(3,3) DEXs. The operator has provided the specifics below (epoch number, DEX names, pair names, bribe amounts, or vote links). Format as a clean, direct announcement. Lead with the epoch or action. If multiple DEXs are listed, present them clearly — one per line or in a tight list. End with a clear call to action for veNFT holders to vote for MCLB gauges. Tone: confident operator update. No fluff. Make it immediately useful for someone deciding where to cast their votes.",
+    "weekly":     "Topic: Weekly MCLB DAO operational update. The operator has provided the key points below. Write a clear, readable update covering what happened this week: new deployments, partnership activity, treasury moves, notable events, and what is coming next. Sound like an operator giving a real briefing — specific over vague, confident without being promotional. If multiple things happened, a short thread works better than cramming everything into one tweet.",
 }
 
 
@@ -2459,12 +2461,14 @@ body.sidebar-collapsed .topbar-brand-text { display: none; }
               <button class="tone-btn" data-pillar="treasury"         onclick="setPillar(this)">Treasury</button>
               <button class="tone-btn" data-pillar="ecosystem"        onclick="setPillar(this)">Ecosystem</button>
               <button class="tone-btn" data-pillar="operator"         onclick="setPillar(this)">Operator</button>
+              <button class="tone-btn" data-pillar="bribes"           onclick="setPillar(this)">Bribes</button>
+              <button class="tone-btn" data-pillar="weekly"           onclick="setPillar(this)">Weekly Update</button>
             </div>
           </div>
 
           <div style="margin-bottom:13px">
-            <div class="input-card-label" style="margin-bottom:5px">Angle <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">— optional</span></div>
-            <input id="origInstructions" class="itext" type="text" style="width:100%" placeholder="Leave blank to let AI pick the angle…">
+            <div class="input-card-label" style="margin-bottom:5px" id="origDetailsLabel">Angle <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">— optional</span></div>
+            <textarea id="origInstructions" class="itext" rows="3" style="width:100%;resize:vertical;font-family:inherit" placeholder="Leave blank to let AI pick the angle…"></textarea>
           </div>
 
           <div style="margin-bottom:14px">
@@ -3408,10 +3412,34 @@ let selectedPillar = "fbomb";
 let selectedFormat = "tweet";
 let origTweets     = [];
 
+const PILLAR_META = {
+  bribes: {
+    label:       "Details",
+    labelNote:   "— paste your epoch data",
+    placeholder: "e.g. Epoch 142. Aerodrome fBOMB/ETH: 500 USDC. Velodrome fBOMB/USDC: 300 USDC. SwapX fBOMB/S: 200 USDC.",
+  },
+  weekly: {
+    label:       "This week's updates",
+    labelNote:   "— bullet points are fine",
+    placeholder: "e.g. Launched fBOMB pool on Beradrome. Treasury up 12%. Curvance going live on Monad next week. Epoch 142 bribes deployed.",
+  },
+};
+
 function setPillar(btn) {
   btn.closest("div").querySelectorAll(".tone-btn[data-pillar]").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
   selectedPillar = btn.dataset.pillar;
+
+  const meta  = PILLAR_META[selectedPillar];
+  const label = document.getElementById("origDetailsLabel");
+  const input = document.getElementById("origInstructions");
+  if (meta && label && input) {
+    label.innerHTML = `${meta.label} <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">${meta.labelNote}</span>`;
+    input.placeholder = meta.placeholder;
+  } else if (label && input) {
+    label.innerHTML = `Angle <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">— optional</span>`;
+    input.placeholder = "Leave blank to let AI pick the angle…";
+  }
 }
 
 function setFormat(btn) {
