@@ -806,10 +806,12 @@ async def run():
             headless=True,
             args=[
                 "--no-sandbox",
-                "--disable-dev-shm-usage",   # use /tmp instead of /dev/shm (fixes crashes in containers)
+                "--disable-dev-shm-usage",
                 "--disable-gpu",
                 "--disable-setuid-sandbox",
-                "--single-process",          # lower memory footprint in constrained environments
+                "--disable-extensions",
+                "--disable-background-networking",
+                "--disable-sync",
             ]
         )
         context = await browser.new_context(
