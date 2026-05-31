@@ -694,9 +694,10 @@ def last_scrape():
     import datetime
     if not DRAFTS_FILE.exists():
         return jsonify({"time": None})
-    mtime = DRAFTS_FILE.stat().st_mtime
-    dt    = datetime.datetime.fromtimestamp(mtime)
-    label = dt.strftime("%-d %b %Y, %-I:%M %p")
+    mtime   = DRAFTS_FILE.stat().st_mtime
+    aest    = datetime.timezone(datetime.timedelta(hours=10))
+    dt      = datetime.datetime.fromtimestamp(mtime, tz=aest)
+    label   = dt.strftime("%-d %b %Y, %-I:%M %p") + " AEST"
     return jsonify({"time": label})
 
 
