@@ -353,7 +353,7 @@ def tweet_age_days(tweet_id: str) -> float:
     except (ValueError, TypeError, OverflowError):
         return 0.0
 
-MAX_TWEET_AGE_DAYS = 4   # only process tweets posted in the last 4 days
+MAX_TWEET_AGE_DAYS = float(os.getenv("MAX_TWEET_AGE_DAYS", "3"))  # only process tweets posted in the last N days
 
 # ── Twitter scraping via Playwright (DOM-primary) ─────────────────────────────
 
@@ -802,7 +802,16 @@ async def run():
     pw_cookies = playwright_cookies(raw_cookies)
 
     async with async_playwright() as pw:
-        browser = await pw.chromium.launch(headless=True)
+        browser = await pw.chromium.launch(
+            headless=True,
+            args=[
+                "--no-sandbox",
+                "--disable-dev-shm-usage",   # use /tmp instead of /dev/shm (fixes crashes in containers)
+                "--disable-gpu",
+                "--disable-setuid-sandbox",
+                "--single-process",          # lower memory footprint in constrained environments
+            ]
+        )
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
             viewport={"width": 1280, "height": 800},
