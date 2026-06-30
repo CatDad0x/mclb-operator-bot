@@ -678,7 +678,10 @@ def post_draft():
     reply_to = draft.get("tweet_id") if draft.get("type") == "reply" else None
     qt_url   = draft.get("tweet_url") if draft.get("type") == "qt"    else None
 
-    result = asyncio.run(_post_tweet(text, cookies, reply_to_id=reply_to, qt_url=qt_url))
+    try:
+        result = asyncio.run(_post_tweet(text, cookies, reply_to_id=reply_to, qt_url=qt_url))
+    except Exception as ex:
+        return jsonify({"ok": False, "error": str(ex)})
 
     if result["ok"]:
         draft["reviewed"]       = True
@@ -3267,7 +3270,7 @@ async function postDraft(tid, version, btn) {
     setTimeout(loadDrafts, 800);
   } else {
     fb.style.display = "inline"; fb.className = "afb err";
-    fb.textContent = "Failed: " + (res.error || res.body || "unknown");
+    fb.textContent = "Failed: " + (res.error || (res.status ? "HTTP " + res.status + (res.body ? " " + res.body : "") : res.body) || "unknown");
     unlock(tid);
   }
 }
