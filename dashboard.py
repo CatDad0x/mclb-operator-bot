@@ -65,20 +65,49 @@ def make_headers(cookies: dict) -> dict:
 
 
 async def _post_tweet(text: str, cookies: dict, reply_to_id: str = None, qt_url: str = None) -> dict:
-    data = {"status": text}
-    if reply_to_id:
-        data["in_reply_to_status_id"] = reply_to_id
-        data["auto_populate_reply_metadata"] = "true"
-    if qt_url:
-        data["attachment_url"] = qt_url
-    async with httpx.AsyncClient(timeout=15) as client:
-        resp = await client.post(
-            "https://twitter.com/i/api/1.1/statuses/update.json",
-            data=data,
-            headers={**make_headers(cookies), "content-type": "application/x-www-form-urlencoded"},
-            cookies=cookies,
+    from playwright.async_api import async_playwright
+    from bot import playwright_cookies as _pw_cookies
+
+    raw = [{"name": k, "value": v} for k, v in cookies.items()]
+    pw_cookies = _pw_cookies(raw)
+
+    async with async_playwright() as pw:
+        browser = await pw.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--disable-setuid-sandbox"],
         )
-    return {"ok": resp.status_code == 200, "status": resp.status_code, "body": resp.text[:300]}
+        ctx = await browser.new_context(
+            user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+        )
+        await ctx.add_cookies(pw_cookies)
+        page = await ctx.new_page()
+        try:
+            if reply_to_id:
+                await page.goto(f"https://x.com/i/web/status/{reply_to_id}", wait_until="domcontentloaded", timeout=30000)
+                await page.wait_for_timeout(3000)
+                await page.locator('[data-testid="reply"]').first.click()
+                await page.wait_for_timeout(2000)
+            else:
+                await page.goto("https://x.com/compose/tweet", wait_until="domcontentloaded", timeout=30000)
+                await page.wait_for_timeout(3000)
+
+            textarea = page.locator('[data-testid="tweetTextarea_0"]').first
+            await textarea.wait_for(timeout=10000)
+            await textarea.click()
+            full_text = text if not qt_url else text + "\n" + qt_url
+            await textarea.type(full_text, delay=20)
+            await page.wait_for_timeout(600)
+
+            post_btn = page.locator('[data-testid="tweetButton"],[data-testid="tweetButtonInline"]').first
+            await post_btn.wait_for(state="visible", timeout=10000)
+            await post_btn.click()
+            await page.wait_for_timeout(2500)
+
+            return {"ok": True, "status": 200, "body": "Posted"}
+        except Exception as ex:
+            return {"ok": False, "status": 0, "body": str(ex)}
+        finally:
+            await browser.close()
 
 
 def read_target_accounts() -> list:
